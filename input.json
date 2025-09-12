@@ -1,0 +1,16 @@
+{
+    "destination":"dummay",
+    "departureCity":"dummy",
+    "startDate":"2025-05-24",
+    "endDate":"2025-05-31",
+    "totalBudget":"5000",
+    "currency":"USD",
+    "totalAdultTravellers":"2",
+    "totalChildTravellers":1,
+    "travellingWithPets":false,
+    "stayePrefrence":["Hotel", "Resort"],
+    "transporationPreference":["Vegetarian", "Vegan"],
+    "extraActivites":["NightLife", "Food"],
+    "specialRequrements": ""
+
+}
