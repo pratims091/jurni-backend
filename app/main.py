@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 
 from app.routes.auth import router as auth_router
 from app.routes.trips import router as trips_router
+from app.routes.travel_planner import router as travel_planner_router
 
 load_dotenv()
 
@@ -75,10 +76,11 @@ async def health_check():
 
 app.include_router(auth_router)
 app.include_router(trips_router)
+app.include_router(travel_planner_router)
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000))
+    port = int(os.getenv("PORT", 8001))
     host = os.getenv("HOST", "0.0.0.0")
     
     uvicorn.run(

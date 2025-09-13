@@ -4,17 +4,23 @@ version = "0.1.0"
 description = "Backend service for Jurni application"
 authors = ["Developer <dev@jurni.com>"]
 readme = "README.md"
+packages = [{include = "app"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "^0.116.1"
 uvicorn = "^0.35.0"
-firebase-admin = "^7.1.0"
+firebase-admin = "^6.5.0"
 python-dotenv = "^1.1.1"
 pydantic = "^2.11.7"
 email-validator = "^2.3.0"
 requests = "^2.32.5"
 pyjwt = "^2.10.1"
+httpx = "^0.28.1"
+# ADK dependencies
+google-cloud-aiplatform = { extras = ["adk", "agent-engines"], version = ">=1.95.0" }
+google-genai = "^1.16.1"
+google-adk = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.2"

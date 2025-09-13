@@ -22,7 +22,7 @@ class TripRequest(BaseModel):
     special_requirements: str = Field(default="", description="Any special requirements", alias="specialRequrements")
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class TripResponse(BaseModel):
