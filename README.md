@@ -137,40 +137,6 @@ The travel planner consists of several specialized sub-agents:
 - **Multi-modal Support**: Handles text, images, and structured data
 - **Error Handling**: Robust error handling with graceful fallbacks
 
-### API Endpoints
-
-#### Travel Planner Routes
-
-- `POST /travel-planner/session` - Create/initialize a travel planning session
-- `POST /travel-planner/chat` - Chat with the travel planner (streaming)
-- `POST /travel-planner/save-itinerary` - Save generated itinerary as a trip
-- `GET /travel-planner/session/{session_id}/state` - Get session state
-
-### Usage Example
-
-```python
-# Create a travel planning session
-response = await client.post("/travel-planner/session", json={
-    "session_id": None  # Auto-generate
-})
-session_id = response.json()["session_id"]
-
-# Start chatting with the travel planner
-response = await client.post("/travel-planner/chat", json={
-    "message": "I want to plan a 5-day trip to Japan in spring",
-    "session_id": session_id
-})
-# Response is streamed as Server-Sent Events
-```
-
-### Testing the Integration
-
-Run the test script to verify the ADK integration:
-
-```bash
-python test_adk_integration.py
-```
-
 ### Project Commands
 
 ```bash
@@ -250,7 +216,3 @@ See `.env.example` for all available configuration options.
 ## License
 
 This project is licensed under the MIT License.
-
-## Support
-
-For support and questions, please create an issue in the repository.
