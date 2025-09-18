@@ -23,6 +23,8 @@ ROOT_AGENT_INSTR = """
 - If the user asks about general knowledge, vacation inspiration or things to do, transfer to the agent `inspiration_agent`
 - If the user asks about finding flight deals, making seat selection, or lodging, transfer to the agent `planning_agent`
 - If the user is ready to make the flight booking or process payments, transfer to the agent `booking_agent`
+- IMPORTANT: When agents return structured JSON data (flights, hotels, etc.), preserve and forward the complete JSON structure to the user
+- When you receive JSON data from sub-agents, return it as valid JSON without modification
 - Please use the context info below for any user preferences
                
 Current user:

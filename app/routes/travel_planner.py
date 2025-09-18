@@ -164,6 +164,63 @@ async def chat_with_travel_planner(
         )
 
 
+@router.post("/chat-structured")
+async def chat_with_travel_planner_structured(
+    request: ChatRequest,
+    current_user: TokenData = Depends(get_current_user),
+):
+    """
+    Chat with travel planner and return only structured JSON data.
+    This endpoint returns structured data (flights, hotels) instead of streaming all events.
+    """
+    try:
+        adk_service = get_adk_travel_planner_service()
+        
+        if not request.session_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Session ID is required. Create a session first."
+            )
+        
+        structured_data = None
+        data_type = "unknown"
+        
+        async for event in adk_service.send_message(
+            user_id=current_user.uid,
+            session_id=request.session_id,
+            message=request.message,
+            structured_only=True
+        ):
+            if event.get("type") == "structured_response" and "structured_data" in event:
+                structured_data = event["structured_data"]
+                data_type = event.get("data_type", "unknown")
+                break
+        
+        if structured_data:
+            return {
+                "success": True,
+                "session_id": request.session_id,
+                "data_type": data_type,
+                "data": structured_data
+            }
+        else:
+            return {
+                "success": False,
+                "message": "No structured data found",
+                "session_id": request.session_id,
+                "data": None
+            }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Chat structured error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get structured data from travel planner"
+        )
+
+
 @router.post("/save-itinerary")
 async def save_itinerary_to_trip(
     session_id: str,

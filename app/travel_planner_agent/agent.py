@@ -28,6 +28,8 @@ from app.travel_planner_agent.sub_agents.pre_trip.agent import pre_trip_agent
 from app.travel_planner_agent.tools.memory import _load_precreated_itinerary
 
 
+from google.genai.types import GenerateContentConfig
+
 root_agent = Agent(
     model="gemini-2.5-flash",
     name="root_agent",
@@ -42,4 +44,7 @@ root_agent = Agent(
         post_trip_agent,
     ],
     before_agent_callback=_load_precreated_itinerary,
+    generate_content_config=GenerateContentConfig(
+        temperature=0.1
+    ),
 )

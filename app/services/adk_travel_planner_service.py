@@ -96,7 +96,8 @@ class ADKTravelPlannerService:
         self, 
         user_id: str, 
         session_id: str, 
-        message: str
+        message: str,
+        structured_only: bool = False
     ) -> AsyncGenerator[Dict[str, Any], None]:
         """Send message to travel-planner-agent and stream response events."""
         
@@ -114,6 +115,8 @@ class ADKTravelPlannerService:
             )
             
             events = []
+            structured_data_found = None
+            
             async for event in self.runner.run_async(
                 user_id=user_id,
                 session_id=session_id, 
@@ -122,8 +125,23 @@ class ADKTravelPlannerService:
                 # Convert ADK event to our format
                 event_dict = self._convert_adk_event_to_dict(event)
                 events.append(event_dict)
-                yield event_dict
                 
+                # Check if this is structured data
+                if event_dict.get("type") == "structured_response" and "structured_data" in event_dict:
+                    structured_data_found = event_dict
+                
+                # If structured_only is True, only yield structured responses
+                if structured_only:
+                    if event_dict.get("type") == "structured_response":
+                        yield event_dict
+                else:
+                    yield event_dict
+                
+            # Handle structured_only mode - if we found structured data but haven't yielded it yet
+            if structured_only and structured_data_found:
+                yield structured_data_found
+                return
+                    
             # If no events were yielded, ensure we return at least a response
             if not events:
                 # Get the latest event from session
@@ -183,6 +201,57 @@ class ADKTravelPlannerService:
             print(f"Error making object JSON serializable: {e}, object: {type(obj)}")
             return str(obj)
     
+    def _is_json_string(self, text: str) -> bool:
+        """Check if a string is valid JSON."""
+        try:
+            json.loads(text)
+            return True
+        except (json.JSONDecodeError, TypeError):
+            return False
+    
+    def _check_for_structured_data(self, content: Any, event_dict: Dict[str, Any]) -> None:
+        """Check content for structured JSON data and update event dict accordingly."""
+        # Check if content is already structured (from output_schema)
+        if isinstance(content, dict) and "data" in content:
+            # Direct structured data from agent output schema
+            event_dict["structured_data"] = content
+            event_dict["type"] = "structured_response"
+            
+            # Detect data type
+            data_items = content.get("data", [])
+            if data_items and isinstance(data_items, list) and len(data_items) > 0:
+                first_item = data_items[0]
+                if isinstance(first_item, dict):
+                    if "flightNumber" in first_item:
+                        event_dict["data_type"] = "flights"
+                    elif "pricePerNight" in first_item:
+                        event_dict["data_type"] = "hotels"
+            return
+        
+        # Check for JSON strings in text parts
+        if isinstance(content, dict) and 'parts' in content:
+            for part in content.get('parts', []):
+                if isinstance(part, dict) and 'text' in part:
+                    text_content = part['text']
+                    if isinstance(text_content, str) and self._is_json_string(text_content):
+                        try:
+                            # Parse the JSON and add it as structured_data
+                            structured_data = json.loads(text_content)
+                            if "data" in structured_data:
+                                event_dict["structured_data"] = structured_data
+                                event_dict["type"] = "structured_response"
+                                # Also detect specific data types
+                                data_items = structured_data.get("data", [])
+                                if data_items and isinstance(data_items, list) and len(data_items) > 0:
+                                    first_item = data_items[0]
+                                    if isinstance(first_item, dict):
+                                        if "flightNumber" in first_item:
+                                            event_dict["data_type"] = "flights"
+                                        elif "pricePerNight" in first_item:
+                                            event_dict["data_type"] = "hotels"
+                        except json.JSONDecodeError:
+                            continue
+    
     def _convert_adk_event_to_dict(self, event: Event) -> Dict[str, Any]:
         """Convert ADK Event to dictionary format expected by frontend."""
         
@@ -204,7 +273,11 @@ class ADKTravelPlannerService:
             # Add content if available
             if hasattr(event, 'content') and event.content:
                 # Convert Content object to JSON-serializable dict
-                event_dict["content"] = self._make_json_serializable(event.content)
+                content = self._make_json_serializable(event.content)
+                event_dict["content"] = content
+                
+                # Check if the content contains structured JSON data
+                self._check_for_structured_data(content, event_dict)
         except Exception as e:
             print(f"Error getting basic event properties: {e}")
         
@@ -224,6 +297,26 @@ class ADKTravelPlannerService:
             if function_responses:
                 event_dict["function_responses"] = self._make_json_serializable(function_responses)
                 event_dict["type"] = "function_response"
+                
+                # Check if function responses contain structured data
+                responses_serialized = self._make_json_serializable(function_responses)
+                for response in responses_serialized:
+                    if isinstance(response, dict) and 'response' in response:
+                        response_data = response['response']
+                        if isinstance(response_data, dict) and 'data' in response_data:
+                            # This looks like our structured data format
+                            event_dict["structured_data"] = response_data
+                            event_dict["type"] = "structured_response"
+                            
+                            # Detect data type
+                            data_items = response_data.get("data", [])
+                            if data_items and isinstance(data_items, list) and len(data_items) > 0:
+                                first_item = data_items[0]
+                                if isinstance(first_item, dict):
+                                    if "flightNumber" in first_item:
+                                        event_dict["data_type"] = "flights"
+                                    elif "pricePerNight" in first_item:
+                                        event_dict["data_type"] = "hotels"
         except Exception as e:
             print(f"Error getting function responses: {e}")
         
