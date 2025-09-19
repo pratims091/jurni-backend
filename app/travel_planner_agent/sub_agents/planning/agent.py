@@ -54,8 +54,8 @@ hotel_search_agent = Agent(
     instruction=prompt.HOTEL_SEARCH_INSTR,
     disallow_transfer_to_parent=True,
     disallow_transfer_to_peers=True,
-    output_schema=types.HotelsSelection,
-    output_key="hotel",
+    output_schema=types.CustomHotelResponse,
+    output_key="hotel_data",
     generate_content_config=types.json_response_config,
 )
 
@@ -79,8 +79,8 @@ flight_search_agent = Agent(
     instruction=prompt.FLIGHT_SEARCH_INSTR,
     disallow_transfer_to_parent=True,
     disallow_transfer_to_peers=True,
-    output_schema=types.FlightsSelection,
-    output_key="flight",
+    output_schema=types.CustomFlightResponse,
+    output_key="flight_data",
     generate_content_config=types.json_response_config,
 )
 
@@ -99,6 +99,7 @@ planning_agent = Agent(
         memorize,
     ],
     generate_content_config=GenerateContentConfig(
-        temperature=0.1, top_p=0.5
+        temperature=0.1, 
+        top_p=0.5
     )
 )

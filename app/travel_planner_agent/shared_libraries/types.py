@@ -229,3 +229,57 @@ class UserProfile(BaseModel):
 class PackingList(BaseModel):
     """A list of things to pack for the trip."""
     items: list[str]
+
+class CustomLayover(BaseModel):
+    """A layover during flight."""
+    city: str = Field(description="Layover city name")
+    duration: str = Field(description="Layover duration, e.g. '1h 20m'")
+
+
+class CustomFlightData(BaseModel):
+    """Custom flight data matching your flights.json format."""
+    id: str = Field(description="Unique flight identifier")
+    airline: str = Field(description="Airline name")
+    flightNumber: str = Field(description="Flight number with airline code")
+    price: int = Field(description="Price in your currency units")
+    duration: str = Field(description="Flight duration, e.g. '4h 30m'")
+    departure: str = Field(description="Departure time in HH:MM format")
+    arrival: str = Field(description="Arrival time in HH:MM format")
+    departureDate: str = Field(description="Departure date in YYYY-MM-DD format")
+    arrivalDate: str = Field(description="Arrival date in YYYY-MM-DD format")
+    stops: int = Field(description="Number of stops")
+    aircraft: str = Field(description="Aircraft type")
+    class_: str = Field(alias="class", description="Flight class (economy, business, first)")
+    amenities: list[str] = Field(description="List of included amenities")
+    baggage: str = Field(description="Baggage allowance description")
+    departureAirport: str = Field(description="Departure airport code")
+    arrivalAirport: str = Field(description="Arrival airport code")
+    layovers: list[CustomLayover] = Field(default=[], description="List of layovers")
+
+
+class CustomFlightResponse(BaseModel):
+    """Response format for custom flight data."""
+    data: list[CustomFlightData]
+
+
+class CustomHotelData(BaseModel):
+    """Custom hotel data matching hotels.json format."""
+    id: str = Field(description="Unique hotel identifier")
+    name: str = Field(description="Hotel name")
+    rating: float = Field(description="Hotel rating out of 5")
+    price: int = Field(description="Base price")
+    pricePerNight: int = Field(description="Price per night")
+    totalPrice: int = Field(description="Total price for stay")
+    image: str = Field(description="Hotel image URL or path")
+    amenities: list[str] = Field(description="List of hotel amenities")
+    location: str = Field(description="Hotel location description")
+    reviews: int = Field(description="Number of reviews")
+    description: str = Field(description="Hotel description")
+    category: str = Field(description="Hotel category (budget, business, luxury)")
+    highlights: list[str] = Field(description="Hotel highlights")
+    distanceFromCenter: str = Field(description="Distance from city center")
+
+
+class CustomHotelResponse(BaseModel):
+    """Response format for custom hotel data."""
+    data: list[CustomHotelData]
