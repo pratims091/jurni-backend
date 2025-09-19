@@ -16,7 +16,7 @@
 
 from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
-from app.travel_planner_agent.shared_libraries.types import DestinationIdeas, POISuggestions, json_response_config
+from app.travel_planner_agent.shared_libraries.types import DestinationIdeas, POISuggestions, CustomActivityResponse, json_response_config
 from app.travel_planner_agent.sub_agents.inspiration import prompt
 from app.travel_planner_agent.tools.places import map_tool
 
@@ -44,6 +44,7 @@ poi_agent = Agent(
     output_key="poi",
     generate_content_config=json_response_config,
 )
+
 
 inspiration_agent = Agent(
     model="gemini-2.5-flash",

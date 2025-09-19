@@ -226,7 +226,25 @@ class ADKTravelPlannerService:
                         event_dict["data_type"] = "flights"
                     elif "pricePerNight" in first_item:
                         event_dict["data_type"] = "hotels"
+                    elif "place_name" in first_item:
+                        event_dict["data_type"] = "poi"
+                        converted_data = self._convert_poi_to_activities(content)
+                        if converted_data:
+                            event_dict["structured_data"] = converted_data
+                            event_dict["data_type"] = "activities"
             return
+        
+        if isinstance(content, dict) and "poi" in content:
+            poi_data = content["poi"]
+            if isinstance(poi_data, dict) and "places" in poi_data:
+                converted_data = self._convert_poi_to_activities(poi_data)
+                if converted_data:
+                    event_dict["structured_data"] = converted_data
+                    event_dict["type"] = "structured_response"
+                    event_dict["data_type"] = "activities"
+                    return
+                else:
+                    print(f"POI conversion failed")
         
         # Check for JSON strings in text parts
         if isinstance(content, dict) and 'parts' in content:
@@ -249,6 +267,14 @@ class ADKTravelPlannerService:
                                             event_dict["data_type"] = "flights"
                                         elif "pricePerNight" in first_item:
                                             event_dict["data_type"] = "hotels"
+                                        elif "place_name" in first_item:
+                                            event_dict["data_type"] = "poi"
+                                            converted_data = self._convert_poi_to_activities(structured_data)
+                                            if converted_data:
+                                                event_dict["structured_data"] = converted_data
+                                                event_dict["data_type"] = "activities"
+                                        elif "category" in first_item and "difficulty" in first_item:
+                                            event_dict["data_type"] = "activities"
                         except json.JSONDecodeError:
                             continue
     
@@ -303,6 +329,8 @@ class ADKTravelPlannerService:
                 for response in responses_serialized:
                     if isinstance(response, dict) and 'response' in response:
                         response_data = response['response']
+                        
+                        # Check for standard data format
                         if isinstance(response_data, dict) and 'data' in response_data:
                             # This looks like our structured data format
                             event_dict["structured_data"] = response_data
@@ -317,6 +345,23 @@ class ADKTravelPlannerService:
                                         event_dict["data_type"] = "flights"
                                     elif "pricePerNight" in first_item:
                                         event_dict["data_type"] = "hotels"
+                                    elif "place_name" in first_item:
+                                        event_dict["data_type"] = "poi"
+                                        converted_data = self._convert_poi_to_activities(response_data)
+                                        if converted_data:
+                                            event_dict["structured_data"] = converted_data
+                                            event_dict["data_type"] = "activities"
+                                    elif "category" in first_item and "difficulty" in first_item:
+                                        event_dict["data_type"] = "activities"
+                        
+                        elif isinstance(response_data, dict) and "poi" in response_data:
+                            poi_data = response_data["poi"]
+                            if isinstance(poi_data, dict) and "places" in poi_data:
+                                converted_data = self._convert_poi_to_activities(poi_data)
+                                if converted_data:
+                                    event_dict["structured_data"] = converted_data
+                                    event_dict["type"] = "structured_response"
+                                    event_dict["data_type"] = "activities"
         except Exception as e:
             print(f"Error getting function responses: {e}")
         
@@ -349,6 +394,88 @@ class ADKTravelPlannerService:
         
         # Make the entire event dict JSON serializable as a final pass
         return self._make_json_serializable(event_dict)
+    
+    def _convert_poi_to_activities(self, poi_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Convert POI data format to activities format matching test.json structure."""
+        try:
+            print(f"DEBUG: Converting POI data: {poi_data}")
+            places = poi_data.get("places", [])
+            print(f"DEBUG: Found {len(places)} places in POI data")
+            if not places:
+                print(f"DEBUG: No places found in POI data")
+                return None
+                
+            activities = []
+            for i, place in enumerate(places):
+                if not isinstance(place, dict):
+                    continue
+                    
+                # Map POI fields to activities format
+                activity = {
+                    "id": f"activity_{i+1}",
+                    "name": place.get("place_name", "Unknown Activity"),
+                    "description": place.get("highlights", "Interesting place to visit"),
+                    "category": self._categorize_poi(place.get("place_name", ""), place.get("highlights", "")),
+                    "duration": 2,  # Default 2 hours
+                    "cost": 0,  # Default free
+                    "rating": self._safe_float_conversion(place.get("review_ratings", "4.0")),
+                    "popularity": "medium",  # Default
+                    "included": False,  # Default
+                    "difficulty": "easy",  # Default
+                    "groupSize": "any size",  # Default
+                    "location": place.get("address", place.get("place_name", "")),
+                    "icon": self._get_poi_icon(place.get("place_name", ""), place.get("highlights", ""))
+                }
+                activities.append(activity)
+            
+            return {"data": activities}
+            
+        except Exception as e:
+            print(f"Error converting POI to activities: {e}")
+            return None
+    
+    def _categorize_poi(self, name: str, highlights: str) -> str:
+        """Categorize a POI based on name and highlights."""
+        text = f"{name} {highlights}".lower()
+        
+        if any(word in text for word in ["museum", "art", "gallery", "cultural", "historic", "heritage"]):
+            return "cultural"
+        elif any(word in text for word in ["park", "beach", "mountain", "nature", "outdoor", "hiking"]):
+            return "nature"
+        elif any(word in text for word in ["restaurant", "food", "market", "cafe", "dining"]):
+            return "food"
+        elif any(word in text for word in ["adventure", "zip", "climb", "extreme", "sports"]):
+            return "adventure"
+        elif any(word in text for word in ["spa", "relax", "wellness", "massage", "resort"]):
+            return "relaxation"
+        else:
+            return "sightseeing"
+    
+    def _get_poi_icon(self, name: str, highlights: str) -> str:
+        """Get appropriate emoji icon for a POI."""
+        text = f"{name} {highlights}".lower()
+        
+        if any(word in text for word in ["museum", "art", "gallery"]):
+            return "🏛️"
+        elif any(word in text for word in ["park", "nature"]):
+            return "🌳"
+        elif any(word in text for word in ["beach"]):
+            return "🏖️"
+        elif any(word in text for word in ["mountain", "hiking"]):
+            return "🏔️"
+        elif any(word in text for word in ["restaurant", "food", "market"]):
+            return "🍽️"
+        elif any(word in text for word in ["historic", "heritage", "temple", "church"]):
+            return "🏛️"
+        else:
+            return "📍"
+    
+    def _safe_float_conversion(self, value: str) -> float:
+        """Safely convert string to float with fallback."""
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            return 4.0  # Default rating
     
     async def get_session_state(self, user_id: str, session_id: str) -> Dict[str, Any]:
         """Get current session state (includes itinerary, preferences, etc.)."""

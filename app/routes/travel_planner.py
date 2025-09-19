@@ -20,6 +20,112 @@ class ChatRequest(BaseModel):
     session_id: Optional[str] = None
 
 
+class StructuredTravelParams(BaseModel):
+    """Structured travel parameters for automated queries."""
+    destination: str
+    departure: str
+    budget: str
+    currency: str = "INR" 
+    totalTravellers: str
+    durationDays: str
+    startDate: Optional[str] = None
+    returnDate: Optional[str] = None
+    travelClass: Optional[str] = None
+    accommodationType: Optional[str] = None
+
+
+class StructuredChatRequest(BaseModel):
+    """Request for structured chat with travel planner."""
+    session_id: Optional[str] = None
+    query_type: str  # "flights", "hotels", or "itinerary"
+    travel_params: StructuredTravelParams
+
+
+def generate_flight_query_message(params: StructuredTravelParams) -> str:
+    """Generate a natural language message for flight search."""
+    message = f"I need flights from {params.departure} to {params.destination}"
+    
+    if params.startDate:
+        message += f" on {params.startDate}"
+    
+    if params.returnDate:
+        message += f" returning on {params.returnDate}"
+    elif params.durationDays:
+        message += f" for {params.durationDays} days"
+    
+    if params.totalTravellers:
+        message += f" for {params.totalTravellers} travelers"
+    
+    if params.budget and params.currency:
+        message += f" with a budget of {params.budget} {params.currency}"
+    
+    if params.travelClass:
+        message += f" in {params.travelClass} class"
+    
+    return message
+
+
+def generate_hotel_query_message(params: StructuredTravelParams) -> str:
+    """Generate a natural language message for hotel search."""
+    message = f"I need hotels in {params.destination}"
+    
+    if params.durationDays:
+        message += f" for {params.durationDays} nights"
+    
+    if params.totalTravellers:
+        message += f" for {params.totalTravellers} guests"
+    
+    if params.budget and params.currency:
+        message += f" with a budget of {params.budget} {params.currency}"
+    
+    if params.accommodationType:
+        message += f" preferring {params.accommodationType} accommodation"
+    
+    if params.startDate:
+        message += f" from {params.startDate}"
+    
+    return message
+
+
+def generate_itinerary_query_message(params: StructuredTravelParams) -> str:
+    """Generate a natural language message for full itinerary planning."""
+    message = f"I want to plan a trip from {params.departure} to {params.destination}"
+    
+    if params.durationDays:
+        message += f" for {params.durationDays} days"
+    
+    if params.totalTravellers:
+        message += f" for {params.totalTravellers} travelers"
+    
+    if params.budget and params.currency:
+        message += f" with a total budget of {params.budget} {params.currency}"
+    
+    if params.startDate:
+        message += f" starting {params.startDate}"
+    
+    message += ". Please help me with flights, hotels, and create a complete itinerary."
+    
+    return message
+
+
+def generate_activities_query_message(params: StructuredTravelParams) -> str:
+    """Generate a natural language message for activities search."""
+    message = f"I want to find activities and things to do in {params.destination}"
+    
+    if params.totalTravellers:
+        message += f" for {params.totalTravellers} travelers"
+    
+    if params.durationDays:
+        message += f" during my {params.durationDays} day trip"
+    
+    if params.budget and params.currency:
+        message += f" with a budget of {params.budget} {params.currency}"
+    
+    message += ". Please provide detailed activity recommendations with costs, duration, and difficulty levels."
+    
+    return message
+
+
 class SessionRequest(BaseModel):
     """Request to create/initialize a session."""
     session_id: Optional[str] = None
@@ -166,12 +272,19 @@ async def chat_with_travel_planner(
 
 @router.post("/chat-structured")
 async def chat_with_travel_planner_structured(
-    request: ChatRequest,
+    request: StructuredChatRequest,
     current_user: TokenData = Depends(get_current_user),
 ):
     """
-    Chat with travel planner and return only structured JSON data.
-    This endpoint returns structured data (flights, hotels) instead of streaming all events.
+    Chat with travel planner using structured parameters and return only JSON data.
+    
+    Query types supported:
+    - "flights": Returns flight search results
+    - "hotels": Returns hotel search results  
+    - "itinerary": Returns complete trip planning
+    - "activities": Returns structured activity recommendations
+    
+    Body should contain travel_params matching your test.json structure.
     """
     try:
         adk_service = get_adk_travel_planner_service()
@@ -182,14 +295,35 @@ async def chat_with_travel_planner_structured(
                 detail="Session ID is required. Create a session first."
             )
         
+        # Validate query_type
+        valid_query_types = ["flights", "hotels", "itinerary", "activities"]
+        if request.query_type not in valid_query_types:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid query_type. Must be one of: {valid_query_types}"
+            )
+        
+        # Generate appropriate message based on query type
+        if request.query_type == "flights":
+            generated_message = generate_flight_query_message(request.travel_params)
+        elif request.query_type == "hotels":
+            generated_message = generate_hotel_query_message(request.travel_params)
+        elif request.query_type == "itinerary":
+            generated_message = generate_itinerary_query_message(request.travel_params)
+        elif request.query_type == "activities":
+            generated_message = generate_activities_query_message(request.travel_params)
+        
+        print(f"Generated message for {request.query_type}: {generated_message}")
+        
+        # Collect all events to find structured responses
         structured_data = None
         data_type = "unknown"
         
         async for event in adk_service.send_message(
             user_id=current_user.uid,
             session_id=request.session_id,
-            message=request.message,
-            structured_only=True
+            message=generated_message,
+            structured_only=True  # Only get structured responses
         ):
             if event.get("type") == "structured_response" and "structured_data" in event:
                 structured_data = event["structured_data"]
@@ -199,15 +333,20 @@ async def chat_with_travel_planner_structured(
         if structured_data:
             return {
                 "success": True,
+                "message": f"{request.query_type.title()} data retrieved successfully",
                 "session_id": request.session_id,
+                "query_type": request.query_type,
                 "data_type": data_type,
+                "generated_query": generated_message,
                 "data": structured_data
             }
         else:
             return {
                 "success": False,
-                "message": "No structured data found",
+                "message": f"No structured {request.query_type} data found",
                 "session_id": request.session_id,
+                "query_type": request.query_type,
+                "generated_query": generated_message,
                 "data": None
             }
         
@@ -219,8 +358,6 @@ async def chat_with_travel_planner_structured(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to get structured data from travel planner"
         )
-
-
 @router.post("/save-itinerary")
 async def save_itinerary_to_trip(
     session_id: str,
