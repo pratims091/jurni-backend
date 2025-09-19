@@ -203,7 +203,7 @@ class Itinerary(BaseModel):
     start_date: str = Field(description="Trip Start Date in YYYY-MM-DD format")
     end_date: str = Field(description="Trip End Date in YYYY-MM-DD format")
     origin: str = Field(description="Trip Origin, e.g. San Diego")
-    destination: str = (Field(description="Trip Destination, e.g. Seattle"),)
+    destination: str = Field(description="Trip Destination, e.g. Seattle")
     days: list[ItineraryDay] = Field(
         default_factory=list, description="The multi-days itinerary"
     )
@@ -283,3 +283,26 @@ class CustomHotelData(BaseModel):
 class CustomHotelResponse(BaseModel):
     """Response format for custom hotel data."""
     data: list[CustomHotelData]
+
+
+# Custom activity types matching test.json format
+class CustomActivityData(BaseModel):
+    """Custom activity data matching test.json format."""
+    id: str = Field(description="Unique activity identifier")
+    name: str = Field(description="Activity name")
+    description: str = Field(description="Activity description")
+    category: str = Field(description="Activity category (adventure, cultural, relaxation, etc.)")
+    duration: int = Field(description="Duration in hours")
+    cost: int = Field(description="Cost in currency units")
+    rating: float = Field(description="Activity rating out of 5")
+    popularity: str = Field(description="Popularity level (high, medium, low)")
+    included: bool = Field(description="Whether activity is included in package")
+    difficulty: str = Field(description="Difficulty level (easy, moderate, hard)")
+    groupSize: str = Field(description="Recommended group size")
+    location: str = Field(description="Activity location")
+    icon: str = Field(description="Activity icon emoji")
+
+
+class CustomActivityResponse(BaseModel):
+    """Response format for custom activity data."""
+    data: list[CustomActivityData]

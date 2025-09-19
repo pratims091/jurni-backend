@@ -1,1 +1,1 @@
-python3 -m poetry run python server.py --reload
+poetry run python server.py --reload
