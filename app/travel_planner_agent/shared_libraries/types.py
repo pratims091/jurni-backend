@@ -304,3 +304,41 @@ class CustomActivityData(BaseModel):
 class CustomActivityResponse(BaseModel):
     """Response format for custom activity data."""
     data: list[CustomActivityData]
+
+
+# Activity Planning Types (for organizing activities into daily itinerary)
+class ActivityPlanningItem(BaseModel):
+    """Individual activity item in daily planning."""
+    id: int = Field(description="Unique activity identifier")
+    name: str = Field(description="Activity name")
+    description: str = Field(description="Activity description")
+    category: str = Field(description="Activity category")
+    duration: int = Field(description="Duration in hours")
+    cost: int = Field(description="Cost in currency units")
+    rating: float = Field(description="Activity rating out of 5")
+    popularity: str = Field(description="Popularity level (high, medium, low)")
+    included: bool = Field(description="Whether included in package")
+    difficulty: str = Field(description="Difficulty level (easy, moderate, hard)")
+    groupSize: str = Field(description="Recommended group size")
+    location: str = Field(description="Activity location")
+    icon: str = Field(description="Activity icon or emoji")
+
+
+class DayPlan(BaseModel):
+    """Plan for a single day with activities."""
+    day: int = Field(description="Day number")
+    activities: list[ActivityPlanningItem] = Field(description="Activities for the day")
+    totalDuration: int = Field(description="Total duration for the day in hours")
+    totalCost: int = Field(description="Total cost for the day")
+
+
+class ActivityPlanningMeta(BaseModel):
+    """Metadata for activity planning response."""
+    grandTotalCost: int = Field(description="Total cost across all days")
+    grandTotalDuration: int = Field(description="Total duration across all days")
+
+
+class ActivityPlanningResponse(BaseModel):
+    """Response format for activity planning - organizing activities into daily schedule."""
+    data: list[DayPlan] = Field(description="Daily plans with activities")
+    meta: ActivityPlanningMeta = Field(description="Summary metadata")
