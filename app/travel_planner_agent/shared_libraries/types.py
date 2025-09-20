@@ -290,17 +290,15 @@ class CustomActivityData(BaseModel):
     """Custom activity data matching test.json format."""
     id: str = Field(description="Unique activity identifier")
     name: str = Field(description="Activity name")
-    description: str = Field(description="Activity description")
-    category: str = Field(description="Activity category (adventure, cultural, relaxation, etc.)")
+    description: str = Field(description="Activity description, should be of max 10 words")
+    category: str = Field(description="Activity category (adventure, cultural, nature, food, entertainment,shopping, relaxation, etc.)")
     duration: int = Field(description="Duration in hours")
     cost: int = Field(description="Cost in currency units")
     rating: float = Field(description="Activity rating out of 5")
     popularity: str = Field(description="Popularity level (high, medium, low)")
-    included: bool = Field(description="Whether activity is included in package")
     difficulty: str = Field(description="Difficulty level (easy, moderate, hard)")
     groupSize: str = Field(description="Recommended group size")
     location: str = Field(description="Activity location")
-    icon: str = Field(description="Activity icon emoji")
 
 
 class CustomActivityResponse(BaseModel):
