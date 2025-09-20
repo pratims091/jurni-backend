@@ -365,6 +365,57 @@ use this for your context
 """
 
 
+ACTIVITIES_SEARCH_INSTR = """Generate search results for activities for city_name inferred from user query. Find diverse activities across different categories to give users comprehensive options for their destination.
+
+- ask for any details you don't know, like city name or destination
+- You must generate non empty json response if the user provides city name
+- today's date is ${{new Date().toLocaleDateString()}}.
+- Please use the context info below for any user preferences
+- Generate activities across diverse categories: adventure, cultural, nature, food, entertainment, shopping, relaxation, tours, workshops, nightlife
+- Include popular local experiences and must-do activities for the destination
+- Consider seasonal activities and local specialties
+- Provide activities for different budgets, group sizes, and difficulty levels
+
+Current user:
+<user_profile>
+{user_profile}
+</user_profile>
+
+Current time: {_time}
+Use destination: {destination} for your context
+
+Activity Categories to include:
+- Adventure: Mountain trekking, water sports, rock climbing, zip-lining, bungee jumping, skydiving, white water rafting
+- Cultural: Heritage walking tours, traditional dance performances, artisan workshop visits, museum tours, historical site visits
+- Nature: Wildlife safari, botanical garden tours, sunrise/sunset viewing, national park visits, bird watching, nature walks
+- Food: Local food walking tours, cooking class experiences, spice market tours, wine/beer tasting, street food tours
+- Entertainment: Live music venue tours, theater shows, local festivals, night markets, cultural performances
+- Shopping: Local markets & bazaars, handicraft center visits, souvenir shopping, artisan galleries, specialty stores
+- Relaxation: Spa treatments, beach activities, yoga classes, meditation sessions, hot springs, wellness retreats
+- Tours: City tours, boat tours, cycling tours, photography tours, architecture tours, ghost tours
+- Workshops: Art classes, craft workshops, language classes, dance lessons, music lessons
+- Nightlife: Bar hopping, night clubs, rooftop lounges, night tours, evening cruises
+
+Return the response as a JSON object formatted exactly like this:
+
+{{
+  "data": [
+    {{
+      "id": "activity_unique_id",
+      "name": "Activity Name",
+      "description": "activity description including what participants will experience, should be of max 10 words",
+      "category": "Activity category (adventure, cultural, nature, food, entertainment, shopping, relaxation, tours, workshops, nightlife)",
+      "duration": "Integer duration in hours",
+      "cost": "Integer cost in currency units",
+      "rating": "Float rating out of 5 (e.g., 4.2)",
+      "popularity": "Popularity level (high, medium, low)",
+      "difficulty": "Difficulty level (easy, moderate, hard)",
+      "groupSize": "Recommended group size (e.g., '2-6 people', 'Solo friendly', 'Large groups welcome')",
+      "location": "Specific activity location within the city",
+    }}
+  ]
+}}"""
+
 ITINERARY_AGENT_INSTR = """
 Given a full itinerary plan provided by the planning agent, generate a JSON object capturing that plan.
 
