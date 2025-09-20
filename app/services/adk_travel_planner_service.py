@@ -232,6 +232,9 @@ class ADKTravelPlannerService:
                         if converted_data:
                             event_dict["structured_data"] = converted_data
                             event_dict["data_type"] = "activities"
+                    elif "day" in first_item and "activities" in first_item:
+                        # This is our activity planning response format
+                        event_dict["data_type"] = "activity_planning"
             return
         
         if isinstance(content, dict) and "poi" in content:
@@ -275,6 +278,9 @@ class ADKTravelPlannerService:
                                                 event_dict["data_type"] = "activities"
                                         elif "category" in first_item and "difficulty" in first_item:
                                             event_dict["data_type"] = "activities"
+                                        elif "day" in first_item and "activities" in first_item:
+                                            # This is our activity planning response format
+                                            event_dict["data_type"] = "activity_planning"
                         except json.JSONDecodeError:
                             continue
     
@@ -353,6 +359,9 @@ class ADKTravelPlannerService:
                                             event_dict["data_type"] = "activities"
                                     elif "category" in first_item and "difficulty" in first_item:
                                         event_dict["data_type"] = "activities"
+                                    elif "day" in first_item and "activities" in first_item:
+                                        # This is our activity planning response format
+                                        event_dict["data_type"] = "activity_planning"
                         
                         elif isinstance(response_data, dict) and "poi" in response_data:
                             poi_data = response_data["poi"]
@@ -398,11 +407,8 @@ class ADKTravelPlannerService:
     def _convert_poi_to_activities(self, poi_data: Dict[str, Any]) -> Dict[str, Any]:
         """Convert POI data format to activities format matching test.json structure."""
         try:
-            print(f"DEBUG: Converting POI data: {poi_data}")
             places = poi_data.get("places", [])
-            print(f"DEBUG: Found {len(places)} places in POI data")
             if not places:
-                print(f"DEBUG: No places found in POI data")
                 return None
                 
             activities = []

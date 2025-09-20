@@ -1,13 +1,11 @@
 """Travel Planner integration routes for travel-planner-agent communication."""
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import StreamingResponse
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from pydantic import BaseModel
 import json
 
-from app.auth.middleware import get_current_user
-from app.models.user import TokenData
 from app.services.firebase_service import get_firebase_service
 from app.services.adk_travel_planner_service import get_adk_travel_planner_service
 
@@ -16,8 +14,24 @@ router = APIRouter(prefix="/travel-planner", tags=["travel-planner"])
 
 class ChatRequest(BaseModel):
     """Request for chat with travel planner."""
+    user_id: str
     message: str
     session_id: Optional[str] = None
+
+
+class ActivityItem(BaseModel):
+    """Individual activity item for planning."""
+    name: str
+    description: str
+    category: str
+    duration: int  # in hours
+    cost: int
+    rating: float
+    popularity: str
+    included: bool = False
+    difficulty: str
+    groupSize: str
+    location: str
 
 
 class StructuredTravelParams(BaseModel):
@@ -32,10 +46,13 @@ class StructuredTravelParams(BaseModel):
     returnDate: Optional[str] = None
     travelClass: Optional[str] = None
     accommodationType: Optional[str] = None
+    # For activity planning - if provided, the agent will organize these activities
+    activities: Optional[List[ActivityItem]] = None
 
 
 class StructuredChatRequest(BaseModel):
     """Request for structured chat with travel planner."""
+    user_id: str
     session_id: Optional[str] = None
     query_type: str  # "flights", "hotels", or "itinerary"
     travel_params: StructuredTravelParams
@@ -89,21 +106,54 @@ def generate_hotel_query_message(params: StructuredTravelParams) -> str:
 
 def generate_itinerary_query_message(params: StructuredTravelParams) -> str:
     """Generate a natural language message for full itinerary planning."""
-    message = f"I want to plan a trip from {params.departure} to {params.destination}"
     
-    if params.durationDays:
-        message += f" for {params.durationDays} days"
-    
-    if params.totalTravellers:
-        message += f" for {params.totalTravellers} travelers"
-    
-    if params.budget and params.currency:
-        message += f" with a total budget of {params.budget} {params.currency}"
-    
-    if params.startDate:
-        message += f" starting {params.startDate}"
-    
-    message += ". Please help me with flights, hotels, and create a complete itinerary."
+    # Check if this is activity planning (activities provided) or general itinerary
+    if params.activities:
+        # Activity planning mode - organize provided activities
+        message = f"I have {len(params.activities)} activities that I want to organize into a daily itinerary"
+        
+        if params.durationDays:
+            message += f" across {params.durationDays} days"
+        
+        if params.totalTravellers:
+            message += f" for {params.totalTravellers} travelers"
+            
+        message += ". Here are the activities:\n\n"
+        
+        # List all activities with details
+        for i, activity in enumerate(params.activities, 1):
+            message += f"{i}. {activity.name}\n"
+            message += f"   Description: {activity.description}\n"
+            message += f"   Category: {activity.category}\n"
+            message += f"   Duration: {activity.duration} hours\n"
+            message += f"   Cost: {activity.cost}\n"
+            message += f"   Difficulty: {activity.difficulty}\n"
+            message += f"   Location: {activity.location}\n\n"
+        
+        message += f"Please use the activity_planning_agent tool to organize these activities into a structured daily itinerary. "
+        message += f"Distribute them optimally across the {params.durationDays} days, "
+        message += "considering duration, cost, and logistics. "
+        message += "I need the result in JSON format showing each day with its activities, "
+        message += "daily totals for cost and duration, and grand totals. "
+        message += "Make sure to use the activity_planning_agent tool to get the proper JSON structure."
+        
+    else:
+        # General itinerary planning mode
+        message = f"I want to plan a trip from {params.departure} to {params.destination}"
+        
+        if params.durationDays:
+            message += f" for {params.durationDays} days"
+        
+        if params.totalTravellers:
+            message += f" for {params.totalTravellers} travelers"
+        
+        if params.budget and params.currency:
+            message += f" with a total budget of {params.budget} {params.currency}"
+        
+        if params.startDate:
+            message += f" starting {params.startDate}"
+        
+        message += ". Please help me with flights, hotels, and create a complete itinerary."
     
     return message
 
@@ -128,7 +178,19 @@ def generate_activities_query_message(params: StructuredTravelParams) -> str:
 
 class SessionRequest(BaseModel):
     """Request to create/initialize a session."""
+    user_id: str
     session_id: Optional[str] = None
+
+
+class SaveItineraryRequest(BaseModel):
+    """Request to save itinerary from session."""
+    user_id: str
+    session_id: str
+
+
+class SessionStateRequest(BaseModel):
+    """Request to get session state."""
+    user_id: str
 
 
 class ChatResponse(BaseModel):
@@ -142,7 +204,6 @@ class ChatResponse(BaseModel):
 @router.post("/session", response_model=ChatResponse)
 async def create_travel_planner_session(
     request: SessionRequest,
-    current_user: TokenData = Depends(get_current_user),
 ):
     """
     Create or get a travel planner session initialized with user data.
@@ -153,24 +214,23 @@ async def create_travel_planner_session(
         
         # Create/get session
         session_data = await adk_service.create_or_get_session(
-            user_id=current_user.uid,
+            user_id=request.user_id,
             session_id=request.session_id
         )
         session_id = session_data.get("id")  # ADK returns 'id' not 'session_id'
         
         # Get user data from jurni_backend
-        user_profile = firebase_service.get_user_profile(current_user.uid) or {}
+        user_profile = firebase_service.get_user_profile(request.user_id) or {}
         user_profile.update({
-            "email": current_user.email,
-            "uid": current_user.uid
+            "uid": request.user_id
         })
         
         # Get user's trip history for personalization
-        recent_trips = firebase_service.get_user_trips(current_user.uid, limit=10)
+        recent_trips = firebase_service.get_user_trips(request.user_id, limit=10)
         
         # Initialize session with user context
         await adk_service.initialize_session_with_user_data(
-            user_id=current_user.uid,
+            user_id=request.user_id,
             session_id=session_id,
             user_profile=user_profile,
             existing_trips=recent_trips
@@ -194,7 +254,6 @@ async def create_travel_planner_session(
 @router.post("/chat")
 async def chat_with_travel_planner(
     request: ChatRequest,
-    current_user: TokenData = Depends(get_current_user),
 ):
     """
     Chat with travel planner and stream responses.
@@ -211,7 +270,7 @@ async def chat_with_travel_planner(
         async def generate_events():
             """Stream travel planner events as Server-Sent Events."""
             try:
-                print(f"Starting stream for user {current_user.uid}, session {request.session_id}")
+                print(f"Starting stream for user {request.user_id}, session {request.session_id}")
                 
                 # Send initial connection confirmation
                 initial_event = {
@@ -222,7 +281,7 @@ async def chat_with_travel_planner(
                 yield f"data: {json.dumps(initial_event)}\n\n"
                 
                 async for event in adk_service.send_message(
-                    user_id=current_user.uid,
+                    user_id=request.user_id,
                     session_id=request.session_id,
                     message=request.message
                 ):
@@ -273,7 +332,6 @@ async def chat_with_travel_planner(
 @router.post("/chat-structured")
 async def chat_with_travel_planner_structured(
     request: StructuredChatRequest,
-    current_user: TokenData = Depends(get_current_user),
 ):
     """
     Chat with travel planner using structured parameters and return only JSON data.
@@ -281,10 +339,16 @@ async def chat_with_travel_planner_structured(
     Query types supported:
     - "flights": Returns flight search results
     - "hotels": Returns hotel search results  
-    - "itinerary": Returns complete trip planning
+    - "itinerary": Returns complete trip planning OR activity planning (when activities provided)
     - "activities": Returns structured activity recommendations
     
-    Body should contain travel_params matching your test.json structure.
+    For Activity Planning:
+    - Set query_type to "itinerary" 
+    - Include activities array in travel_params
+    - The agent will organize your activities into daily itinerary
+    - Returns structured daily planning with cost/duration totals
+    
+    Body should contain travel_params matching your requirements.
     """
     try:
         adk_service = get_adk_travel_planner_service()
@@ -320,7 +384,7 @@ async def chat_with_travel_planner_structured(
         data_type = "unknown"
         
         async for event in adk_service.send_message(
-            user_id=current_user.uid,
+            user_id=request.user_id,
             session_id=request.session_id,
             message=generated_message,
             structured_only=True  # Only get structured responses
@@ -360,8 +424,7 @@ async def chat_with_travel_planner_structured(
         )
 @router.post("/save-itinerary")
 async def save_itinerary_to_trip(
-    session_id: str,
-    current_user: TokenData = Depends(get_current_user),
+    request: SaveItineraryRequest,
 ):
     """
     Extract itinerary from travel planner session and save as a trip.
@@ -372,8 +435,8 @@ async def save_itinerary_to_trip(
         
         # Extract itinerary from travel planner session
         trip_data = await adk_service.extract_itinerary_from_session(
-            user_id=current_user.uid,
-            session_id=session_id
+            user_id=request.user_id,
+            session_id=request.session_id
         )
         
         if not trip_data:
@@ -383,7 +446,7 @@ async def save_itinerary_to_trip(
             )
         
         # Save as trip in jurni_backend
-        trip_id = firebase_service.save_trip(current_user.uid, trip_data)
+        trip_id = firebase_service.save_trip(request.user_id, trip_data)
         
         if not trip_id:
             raise HTTPException(
@@ -394,7 +457,7 @@ async def save_itinerary_to_trip(
         return ChatResponse(
             success=True,
             message="Itinerary saved as trip successfully",
-            session_id=session_id,
+            session_id=request.session_id,
             data={"trip_id": trip_id}
         )
         
@@ -408,10 +471,10 @@ async def save_itinerary_to_trip(
         )
 
 
-@router.get("/session/{session_id}/state")
+@router.post("/session/{session_id}/state")
 async def get_session_state(
     session_id: str,
-    current_user: TokenData = Depends(get_current_user),
+    request: SessionStateRequest,
 ):
     """
     Get current state of travel planner session (for debugging/monitoring).
@@ -420,7 +483,7 @@ async def get_session_state(
         adk_service = get_adk_travel_planner_service()
         
         state = await adk_service.get_session_state(
-            user_id=current_user.uid,
+            user_id=request.user_id,
             session_id=session_id
         )
         

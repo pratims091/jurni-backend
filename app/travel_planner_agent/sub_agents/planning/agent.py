@@ -98,6 +98,19 @@ activities_search_agent = Agent(
 )
 
 
+activity_planning_agent = Agent(
+    model="gemini-2.5-flash",
+    name="activity_planning_agent",
+    description="Organize provided activities into a structured daily itinerary",
+    instruction=prompt.ACTIVITY_PLANNING_INSTR,
+    disallow_transfer_to_parent=True,
+    disallow_transfer_to_peers=True,
+    output_schema=types.ActivityPlanningResponse,
+    output_key="activity_planning",
+    generate_content_config=types.json_response_config,
+)
+
+
 planning_agent = Agent(
     model="gemini-2.5-flash",
     description="""Helps users with travel planning, complete a full itinerary for their vacation, finding best deals for flights and hotels.""",
@@ -110,6 +123,7 @@ planning_agent = Agent(
         AgentTool(agent=hotel_room_selection_agent),
         AgentTool(agent=itinerary_agent),
         AgentTool(agent=activities_search_agent),
+        AgentTool(agent=activity_planning_agent),
         memorize,
     ],
     generate_content_config=GenerateContentConfig(
