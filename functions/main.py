@@ -20,10 +20,6 @@ from app.main import app
 
 
 @https_fn.on_request(
-    cors=options.CorsOptions(
-        cors_origins=["*"],
-        cors_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    ),
     memory=512,
     timeout_sec=300
 )
