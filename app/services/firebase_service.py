@@ -26,7 +26,6 @@ class FirebaseService:
             
             if service_account_path and os.path.exists(service_account_path):
                 cred = credentials.Certificate(service_account_path)
-                print(cred)
             else:
                 try:
                     cred = credentials.ApplicationDefault()
