@@ -204,23 +204,26 @@ class FirebaseService:
             return None
     
     def get_user_trips(self, uid: str, limit: int = 10, offset: int = 0) -> List[Dict[str, Any]]:
-        """Get all trips for a user with pagination."""
+        """Get all trips for a user with pagination. No ordering to avoid index requirements."""
         try:
             trips_ref = self.db.collection('trips')
-            query = trips_ref.where('user_id', '==', uid).order_by('created_at', direction=firestore.Query.DESCENDING)
-            
+
+            # Simple query without ordering - no composite index needed
+            query = trips_ref.where('user_id', '==', uid)
+
             if offset > 0:
                 query = query.offset(offset)
             if limit > 0:
                 query = query.limit(limit)
-            
+
             docs = query.get()
             trips = []
-            
+
             for doc in docs:
                 trip_data = doc.to_dict()
                 trips.append(trip_data)
-            
+
+            print(f"Found {len(trips)} trips for user {uid}")
             return trips
         except Exception as e:
             print(f"Get user trips failed: {e}")
