@@ -23,17 +23,6 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://silly-scone-87292d.netlify.app",
-        "http://localhost:8080",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
