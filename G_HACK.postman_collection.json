@@ -1,0 +1,474 @@
+{
+	"info": {
+		"_postman_id": "60de26fb-a15c-48f0-8324-554676c148ea",
+		"name": "G_HACK",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46229562",
+		"_collection_link": "https://dishantrana-6543624.postman.co/workspace/Dishant-Rana's-Workspace~8515e8b5-6c46-48f3-8a68-39cc0f88f63c/collection/46229562-60de26fb-a15c-48f0-8324-554676c148ea?action=share&source=collection_link&creator=46229562"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"dishantrana107@gmail.com\",\n  \"password\": \"Dis123@google\",\n  \"display_name\": \"Dishant\",\n  \"first_name\": \"Dishant\",\n  \"last_name\": \"Rana\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/auth/signup",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"dishantrana107@gmail.com\",\n  \"password\": \"Dis123@google\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/auth/login",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Profile",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiYzM5OTQ3YTZiNTEyZjc2NzMyNTNmYzk5MDg0MTZkNzAxMzEwOTRmYSJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAZ2VuYWktY2F0YWx5c3RzLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BnZW5haS1jYXRhbHlzdHMuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICJxT1hTVEROYmlJZjZRZFliWmNCZ2xvcUxIZW8xIiwgImlhdCI6IDE3NTc3NTQxNjYsICJleHAiOiAxNzU3NzU3NzY2fQ.eISSsE883h1Td2I85kSc0dZMohRojupl2-RbsHT02iKzoHNYsyX7VYiOt7AkfHjs7tWyocNTUrw0Tkqmb8mgUJJ8D2AypC-9ONks8hhBhZ7K6TqpQt9cJmoYAcTTUM4htbvwyUvt8L1kUNHn-gpXGquMoI70i9K-P_RF48kNBpBESJkIM9mth5WT5YCPKaSRp-Rua5Er-VtD70za-M1NtEY8PxgNMjItf_4ScuHjjfaFt7iDyQa2pERNFzkThYZMj5Q8bq28_jok122AykiLm6GAxowRF9iB73yRRyG6Juh_8FKoSyg8LnD8WEucHfAH_qQ-Kpl9_UHOjYAF0kbrOA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://0.0.0.0:8001/auth/me",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"auth",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All User Trips",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/trips",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Trip by Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"url": {
+					"raw": "http://0.0.0.0:8001/trips/c274e1e6-498b-4245-916c-0f91b0363dd0",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"trips",
+						"c274e1e6-498b-4245-916c-0f91b0363dd0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Trip for user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"destination\": \"\",\n  \"duration\": 3,\n  \"travelers\": 2,\n  \"budgetStatus\": \"WITHIN_BUDGET\",\n  \"totalBudget\": \"15000\",\n  \"startDate\": \"2025-01-25\",\n  \"daysActivitiesSchedule\": [\n    { \"day\": 1, \"activityIds\": [1, 2] },\n    { \"day\": 2, \"activityIds\": [3] },\n    { \"day\": 3, \"activityIds\": [4] }\n  ],\n  \"accommodation\":[\n    {\n      \"id\": \"budget1\",\n      \"name\": \"Cozy Stay Inn\",\n      \"rating\": 3.8,\n      \"price\": 1500,\n      \"pricePerNight\": 1500,\n      \"totalPrice\": 4500,\n      \"image\": \"/api/placeholder/300/200\",\n      \"amenities\": [\"WiFi\", \"Breakfast\", \"Parking\", \"AC\"],\n      \"location\": \"City Center\",\n      \"reviews\": 243,\n      \"description\": \"Clean, comfortable rooms with essential amenities in the heart of the city.\",\n      \"category\": \"budget\",\n      \"highlights\": [\"Great location\", \"Friendly staff\", \"Good value\"],\n      \"distanceFromCenter\": \"0.5 km\"\n    }\n  ],\n  \"flight\": [\n    {\n      \"id\": \"economy2\",\n      \"airline\": \"Budget Wings\",\n      \"flightNumber\": \"BW-5432\",\n      \"price\": 8500,\n      \"duration\": \"4h 30m\",\n      \"departure\": \"08:15\",\n      \"arrival\": \"13:45\",\n      \"departureDate\": \"2024-01-15\",\n      \"arrivalDate\": \"2024-01-15\",\n      \"stops\": 1,\n      \"aircraft\": \"Boeing 737\",\n      \"class\": \"economy\",\n      \"amenities\": [\"Snacks\"],\n      \"baggage\": \"15kg checked + 7kg cabin\",\n      \"departureAirport\": \"DEL\",\n      \"arrivalAirport\": \"GOI\",\n      \"layovers\": [{ \"city\": \"Mumbai\", \"duration\": \"1h 20m\" }]\n    }\n  ]\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/trips",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"trips"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Agent Session",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\":\"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/travel-planner/session",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"travel-planner",
+						"session"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Chat Agent",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\": \"I want to plan a trip to Goa on 26th from Banglore, can you give me list of activities there?\",\n    \"session_id\": \"session_0alVhI5F8zQYQGmYwAf2NMmxVRB2_1758352380\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/travel-planner/chat",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"travel-planner",
+						"chat"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Chat Agent Hotels",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query_type\": \"hotels\",\n  \"session_id\": \"session_1234_1758360273\",\n  \"user_id\":\"1234\",\n  \"travel_params\": {\n    \"destination\": \"Goa\",\n    \"departure\": \"Banglore\", \n    \"budget\": \"25000\",\n    \"currency\": \"INR\",\n    \"totalTravellers\": \"10\",\n    \"durationDays\": \"5\",\n    \"startDate\": \"2025-10-25\", \n    \"returnDate\": \"2025-1-20\",\n    \"travelClass\": \"economy\",\n    \"accommodationType\": \"hotel\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/travel-planner/chat-structured",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"travel-planner",
+						"chat-structured"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Chat Agent Flight",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query_type\": \"flights\",\n  \"session_id\": \"session_0alVhI5F8zQYQGmYwAf2NMmxVRB2_1758353189\",\n  \"travel_params\": {\n    \"destination\": \"Goa\",\n    \"departure\": \"Banglore\", \n    \"budget\": \"25000\",\n    \"currency\": \"INR\",\n    \"totalTravellers\": \"10\",\n    \"durationDays\": \"5\",\n    \"startDate\": \"2025-01-15\", \n    \"returnDate\": \"2025-01-20\",\n    \"travelClass\": \"economy\",\n    \"accommodationType\": \"hotel\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/travel-planner/chat-structured",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"travel-planner",
+						"chat-structured"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Chat Agent Activities",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query_type\": \"activities\",\n  \"session_id\": \"session_0alVhI5F8zQYQGmYwAf2NMmxVRB2_1758358833\",\n  \"user_id\":\"1234\",\n  \"travel_params\": {\n    \"destination\": \"Goa\",\n    \"departure\": \"Banglore\",\n    \"budget\": \"25000\",\n    \"currency\": \"INR\",\n    \"totalTravellers\": \"10\",\n    \"durationDays\": \"5\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/travel-planner/chat-structured",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"travel-planner",
+						"chat-structured"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Plan Activities",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiN2E3NDhlNWE3NWJlNWZiOTZlMWE0YjVlNTliNTk3YTQ3OTU5NjRkMiJ9.eyJpc3MiOiAiZmlyZWJhc2UtYWRtaW5zZGstZmJzdmNAanVybmktYXBwLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwgInN1YiI6ICJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BqdXJuaS1hcHAuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInVpZCI6ICIwYWxWaEk1Rjh6UVlRR21Zd0FmMk5NbXhWUkIyIiwgImlhdCI6IDE3NTgyNzE0OTIsICJleHAiOiAxNzU4Mjc1MDkyfQ.Zylez1CQsm8Pj0m8PEzpnFzEmXUJmFgh8Ou_CmZn14ftNNHfLZr4oytSNNkMdV_WaDd4-Z3qWJmN4h-ALwXYC-IL5VMs5d_J-3KpDF6X4cW3Wq7sMYQmDQjjoGVfQmcpGQIerKapm5HXgi239DrvflgLX90kCZjIfJSDDUwQnnHSim9CdmVCw2ztzoZEs36ilPVvUNFc2ZvlmUHgeV6Vhi6Yxw_2iOwSIwszBH9D88Vlz-KznnyfWab_F2CqKlJq3ilZLc-zYpk9ddMCCIJRcTKjNKfdLgmlsGlgSQhIjHXqVoBLxNQVkPJoQHP2lWhj16I8JhuGtigekGktQp3fWw"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"session_id\": \"session_0alVhI5F8zQYQGmYwAf2NMmxVRB2_1758358833\",\n  \"query_type\": \"itinerary\",\n  \"user_id\":\"1234\",\n  \"travel_params\": {\n    \"destination\": \"Goa\",\n    \"departure\": \"Bengaluru\",\n    \"budget\": \"5000\",\n    \"currency\": \"INR\",\n    \"totalTravellers\": \"2\",\n    \"durationDays\": \"2\",\n    \"startDate\": \"2025-01-25\",\n    \"activities\": [\n      {\n        \"name\": \"Mountain Trekking Adventure\",\n        \"description\": \"Guided trek through scenic mountain trails with breathtaking views\",\n        \"category\": \"adventure\",\n        \"duration\": 7,\n        \"cost\": 2500,\n        \"rating\": 4.8,\n        \"popularity\": \"high\",\n        \"included\": false,\n        \"difficulty\": \"moderate\",\n        \"groupSize\": \"8-12 people\",\n        \"location\": \"Mountain Base Camp\",\n        \"icon\": \"🏔️\"\n      },\n      {\n                \"id\": \"goa_001\",\n                \"name\": \"Old Goa Heritage Walk\",\n                \"description\": \"Explore ancient churches like Basilica of Bom Jesus and Se Cathedral.\",\n                \"category\": \"Cultural\",\n                \"duration\": 3,\n                \"cost\": 0,\n                \"rating\": 4.7,\n                \"popularity\": \"high\",\n                \"difficulty\": \"easy\",\n                \"groupSize\": \"Large groups welcome\",\n                \"location\": \"Old Goa\"\n            },\n            {\n                \"id\": \"goa_002\",\n                \"name\": \"Tropical Spice Plantation Tour\",\n                \"description\": \"Guided tour of a spice farm, enjoy traditional Goan lunch.\",\n                \"category\": \"Nature\",\n                \"duration\": 4,\n                \"cost\": 600,\n                \"rating\": 4.5,\n                \"popularity\": \"medium\",\n                \"difficulty\": \"easy\",\n                \"groupSize\": \"2-10 people\",\n                \"location\": \"Ponda, Goa\"\n            }\n    ]\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://0.0.0.0:8001/travel-planner/chat-structured",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8001",
+					"path": [
+						"travel-planner",
+						"chat-structured"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -11,7 +11,7 @@ from app.services.firebase_service import get_firebase_service
 router = APIRouter(prefix="/trips", tags=["trips"])
 
 
-@router.post("/", response_model=TripCreateResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=TripCreateResponse, status_code=status.HTTP_201_CREATED)
 async def create_trip(trip: TripRequest, current_user: TokenData = Depends(get_current_user)):
     """
     Create a new trip for the authenticated user.
@@ -84,7 +84,7 @@ async def create_trip(trip: TripRequest, current_user: TokenData = Depends(get_c
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occurred while creating the trip")
 
 
-@router.get("/")
+@router.get("")
 async def list_trips(
     limit: int = Query(20, ge=1, le=100, description="Max number of trips to return"),
     offset: int = Query(0, ge=0, description="Number of trips to skip for pagination"),

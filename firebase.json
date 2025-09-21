@@ -1,19 +1,16 @@
 {
   "functions": [
     {
-      "source": "functions",
       "codebase": "default",
       "ignore": [
-        "node_modules",
+        "venv",
         ".git",
         "firebase-debug.log",
         "firebase-debug.*.log",
-        "*.local",
-        "__pycache__",
-        "*.pyc",
-        ".env"
+        "*.local"
       ],
-      "runtime": "python312"
+      "source": "functions",
+      "runtime": "python313"
     }
   ],
   "emulators": {
@@ -23,5 +20,11 @@
     "ui": {
       "enabled": true
     }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-south1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }
