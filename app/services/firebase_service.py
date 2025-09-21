@@ -22,10 +22,11 @@ class FirebaseService:
     def _initialize_firebase(self) -> None:
         """Initialize Firebase Admin SDK."""
         if not firebase_admin._apps:
-            service_account_path = os.getenv('FIREBASE_SERVICE_ACCOUNT_PATH')
+            service_account_path = os.getenv('SERVICE_ACCOUNT_PATH')
             
             if service_account_path and os.path.exists(service_account_path):
                 cred = credentials.Certificate(service_account_path)
+                print(cred)
             else:
                 try:
                     cred = credentials.ApplicationDefault()
@@ -103,9 +104,9 @@ class FirebaseService:
 
     def sign_in_with_password(self, email: str, password: str) -> Optional[Dict[str, Any]]:
         """Sign in via Firebase Identity Toolkit (REST) to obtain an ID token."""
-        api_key = os.getenv("FIREBASE_WEB_API_KEY")
+        api_key = os.getenv("WEB_API_KEY")
         if not api_key:
-            print("FIREBASE_WEB_API_KEY not set; cannot sign in with password.")
+            print("WEB_API_KEY not set; cannot sign in with password.")
             return None
         url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"
         try:

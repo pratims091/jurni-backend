@@ -72,8 +72,8 @@ HOST=0.0.0.0
 ENV=development
 
 # Firebase Configuration
-FIREBASE_SERVICE_ACCOUNT_PATH=path/to/your/firebase-service-account-key.json
-FIREBASE_WEB_API_KEY=your-firebase-web-api-key
+SERVICE_ACCOUNT_PATH=path/to/your/firebase-service-account-key.json
+WEB_API_KEY=your-firebase-web-api-key
 
 # Google Cloud / ADK Configuration
 GOOGLE_GENAI_USE_VERTEXAI=1  # Use Vertex AI (recommended)

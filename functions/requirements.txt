@@ -1,5 +1,5 @@
 # Firebase Functions dependencies for Jurni Backend
-firebase-functions==0.1.0
+firebase_functions~=0.1.0
 firebase-admin==6.5.0
 mangum==0.18.0
 

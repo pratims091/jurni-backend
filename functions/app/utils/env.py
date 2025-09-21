@@ -33,8 +33,8 @@ def is_production() -> bool:
 def get_firebase_config():
     """Get Firebase configuration for current environment."""
     return {
-        'service_account_path': get_env_var('FIREBASE_SERVICE_ACCOUNT_PATH'),
-        'web_api_key': get_env_var('FIREBASE_WEB_API_KEY'),
+        'service_account_path': get_env_var('SERVICE_ACCOUNT_PATH'),
+        'web_api_key': get_env_var('WEB_API_KEY'),
         'use_emulator': is_local_development()
     }
 
