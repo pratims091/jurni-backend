@@ -18,10 +18,7 @@ pyjwt==2.10.1
 # Environment variables
 python-dotenv==1.1.1
 
-# Google Cloud and AI Platform dependencies
-google-cloud-aiplatform[adk,agent-engines]>=1.95.0
-google-genai==1.16.1
-google-adk==1.0.0
+# Note: ADK dependencies removed - travel planner is now a separate service
 
 # Additional dependencies that might be needed
 typing-extensions>=4.0.0

@@ -1,0 +1,33 @@
+{
+  "state": {
+    "user_profile" : {
+      "passport_nationality" : "Indian Citizen",
+      "seat_preference": "window",
+      "food_preference": "all",
+      "allergies": [],
+      "likes": [],
+      "dislikes": [],
+      "price_sensitivity": [],    
+      "home":
+      {
+          "event_type": "home",
+          "local_prefer_mode": "drive"
+      }    
+    },
+    "itinerary": {},
+    "origin" : "",
+    "destination" : "",
+    "start_date" : "",
+    "end_date" : "",
+    "outbound_flight_selection" : "",
+    "outbound_seat_number" : "",
+    "return_flight_selection" : "",
+    "return_seat_number" : "",
+    "hotel_selection" : "",
+    "room_selection" : "",
+    "poi" : "",
+    "itinerary_datetime" : "",
+    "itinerary_start_date" : "",
+    "itinerary_end_date" : ""  
+  }
+}

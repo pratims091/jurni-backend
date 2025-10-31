@@ -14,6 +14,9 @@ from app.routes.travel_planner import router as travel_planner_router
 
 load_dotenv()
 
+if not os.getenv('SERVICE_ACCOUNT_PATH'):
+    os.environ['SERVICE_ACCOUNT_PATH'] = 'serviceAccount.json'
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

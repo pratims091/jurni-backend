@@ -1,0 +1,13 @@
+# Travel Planner Service dependencies
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.11.7
+python-dotenv==1.1.1
+
+# Google Cloud and AI Platform dependencies
+google-cloud-aiplatform[adk,agent-engines]>=1.95.0
+google-genai==1.16.1
+google-adk==1.0.0
+
+# Additional dependencies
+typing-extensions>=4.0.0
