@@ -7,7 +7,7 @@ from pydantic import BaseModel
 import json
 
 from app.services.firebase_service import get_firebase_service
-from app.services.adk_travel_planner_service import get_adk_travel_planner_service
+from app.services.travel_planner_client import get_travel_planner_client
 
 router = APIRouter(prefix="/travel-planner", tags=["travel-planner"])
 
@@ -209,15 +209,15 @@ async def create_travel_planner_session(
     Create or get a travel planner session initialized with user data.
     """
     try:
-        adk_service = get_adk_travel_planner_service()
+        travel_planner_client = get_travel_planner_client()
         firebase_service = get_firebase_service()
         
         # Create/get session
-        session_data = await adk_service.create_or_get_session(
+        session_response = await travel_planner_client.create_session(
             user_id=request.user_id,
             session_id=request.session_id
         )
-        session_id = session_data.get("id")  # ADK returns 'id' not 'session_id'
+        session_id = session_response.get("data", {}).get("id")
         
         # Get user data from jurni_backend
         user_profile = firebase_service.get_user_profile(request.user_id) or {}
@@ -229,7 +229,7 @@ async def create_travel_planner_session(
         recent_trips = firebase_service.get_user_trips(request.user_id, limit=10)
         
         # Initialize session with user context
-        await adk_service.initialize_session_with_user_data(
+        await travel_planner_client.initialize_session_with_user_data(
             user_id=request.user_id,
             session_id=session_id,
             user_profile=user_profile,
@@ -259,7 +259,7 @@ async def chat_with_travel_planner(
     Chat with travel planner and stream responses.
     """
     try:
-        adk_service = get_adk_travel_planner_service()
+        travel_planner_client = get_travel_planner_client()
         
         if not request.session_id:
             raise HTTPException(
@@ -280,7 +280,7 @@ async def chat_with_travel_planner(
                 }
                 yield f"data: {json.dumps(initial_event)}\n\n"
                 
-                async for event in adk_service.send_message(
+                async for event in travel_planner_client.send_message(
                     user_id=request.user_id,
                     session_id=request.session_id,
                     message=request.message
@@ -351,7 +351,7 @@ async def chat_with_travel_planner_structured(
     Body should contain travel_params matching your requirements.
     """
     try:
-        adk_service = get_adk_travel_planner_service()
+        travel_planner_client = get_travel_planner_client()
         
         if not request.session_id:
             raise HTTPException(
@@ -379,30 +379,22 @@ async def chat_with_travel_planner_structured(
         
         print(f"Generated message for {request.query_type}: {generated_message}")
         
-        # Collect all events to find structured responses
-        structured_data = None
-        data_type = "unknown"
-        
-        async for event in adk_service.send_message(
+        # Get structured response from travel planner service
+        response = await travel_planner_client.send_message_structured(
             user_id=request.user_id,
             session_id=request.session_id,
-            message=generated_message,
-            structured_only=True  # Only get structured responses
-        ):
-            if event.get("type") == "structured_response" and "structured_data" in event:
-                structured_data = event["structured_data"]
-                data_type = event.get("data_type", "unknown")
-                break
+            message=generated_message
+        )
         
-        if structured_data:
+        if response.get("success") and response.get("data"):
             return {
                 "success": True,
                 "message": f"{request.query_type.title()} data retrieved successfully",
                 "session_id": request.session_id,
                 "query_type": request.query_type,
-                "data_type": data_type,
+                "data_type": response.get("data_type", "unknown"),
                 "generated_query": generated_message,
-                "data": structured_data
+                "data": response.get("data")
             }
         else:
             return {
@@ -430,14 +422,15 @@ async def save_itinerary_to_trip(
     Extract itinerary from travel planner session and save as a trip.
     """
     try:
-        adk_service = get_adk_travel_planner_service()
+        travel_planner_client = get_travel_planner_client()
         firebase_service = get_firebase_service()
         
         # Extract itinerary from travel planner session
-        trip_data = await adk_service.extract_itinerary_from_session(
+        itinerary_response = await travel_planner_client.extract_itinerary(
             user_id=request.user_id,
             session_id=request.session_id
         )
+        trip_data = itinerary_response.get("data")
         
         if not trip_data:
             raise HTTPException(
@@ -480,12 +473,13 @@ async def get_session_state(
     Get current state of travel planner session (for debugging/monitoring).
     """
     try:
-        adk_service = get_adk_travel_planner_service()
+        travel_planner_client = get_travel_planner_client()
         
-        state = await adk_service.get_session_state(
+        state_response = await travel_planner_client.get_session_state(
             user_id=request.user_id,
             session_id=session_id
         )
+        state = state_response.get("data")
         
         return ChatResponse(
             success=True,
